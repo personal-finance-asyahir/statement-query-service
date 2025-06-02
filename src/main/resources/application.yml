@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: statement-query-service
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BROKERS}
+    consumer:
+      group-id: query-group
+
+  data:
+    mongodb:
+      authentication-database: admin
+      host: ${DB_HOST}
+      username: ${DB_USERNAME}
+      password: ${DB_PASSWORD}
+      database: ${DB_NAME}
