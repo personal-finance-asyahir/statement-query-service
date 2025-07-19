@@ -2,11 +2,14 @@ package com.asyahir.statement_query_service.service;
 
 import com.asyahir.statement_query_service.collection.MaybankCredit;
 import com.asyahir.statement_query_service.repository.MaybankCreditRepository;
-import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class MaybankCreditService {
@@ -20,17 +23,22 @@ public class MaybankCreditService {
 
     public void saveMaybankCredit(List<MaybankCredit> maybankCredits) {
         // TODO: logic to categorise
-        for (int i=0; i<maybankCredits.size(); i++) {
-            MaybankCredit credit = maybankCredits.get(i);
-            String row = credit.getTransactionDate() +
-                    credit.getDescription() +
-                    credit.getAmount() +
-                    credit.getUserId() +
-                    i;
+        if (CollectionUtils.isEmpty(maybankCredits)) return;
 
-            String rowHash = DigestUtils.md5Hex(row);
-            credit.setRowHash(rowHash);
-        }
-        maybankCreditRepository.saveAll(maybankCredits).subscribe();
+        List<String> rowHashes = maybankCredits.stream()
+                .map(MaybankCredit::getRowHash).collect(Collectors.toList());
+
+        maybankCreditRepository.findByRowHashIn(rowHashes)
+                .collectList()
+                .filter(CollectionUtils::isNotEmpty)
+                .map(existingCredits -> maybankCredits.stream()
+                        .filter(credit -> existingCredits.stream()
+                        .noneMatch(c -> StringUtils.equals(credit.getRowHash(), c.getRowHash())))
+                        .collect(Collectors.toUnmodifiableList()))
+                .switchIfEmpty(Mono.just(maybankCredits))
+                .filter(CollectionUtils::isNotEmpty)
+                .flatMap(cs -> maybankCreditRepository.saveAll(cs).collectList())
+                .subscribe();
+
     }
 }

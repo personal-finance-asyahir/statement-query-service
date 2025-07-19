@@ -13,6 +13,7 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class StatementProcessEventListener {
@@ -37,7 +38,7 @@ public class StatementProcessEventListener {
 
         List<MaybankCredit> maybankCreditList = maybankCreditDataList.stream()
                 .map(MaybankCredit::new)
-                .toList();
+                .collect(Collectors.toList());
 
         maybankCreditService.saveMaybankCredit(maybankCreditList);
     }

@@ -1,24 +1,23 @@
 package com.asyahir.statement_query_service.collection;
 
 import com.asyahir.statement_query_service.pojo.MaybankCreditData;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.Builder;
+import lombok.*;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 @Data
-@Document(collation = "maybank_credit")
+@Document(collection = "maybank_credit")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@EqualsAndHashCode(exclude = "id")
 public class MaybankCredit {
     @Id
     private ObjectId id;
@@ -39,5 +38,20 @@ public class MaybankCredit {
         this.postingDate = data.getPostingDate();
         this.transactionDate = data.getTransactionDate();
         this.insertedDateTime = LocalDateTime.now();
+        this.generateRowHash();
+    }
+
+    public void generateRowHash() {
+
+        String formattedDate = transactionDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        String formattedAmount =  String.format("%.2f", amount);
+
+        String transactions = String.format("%s%s%s%s",
+                formattedDate,
+                description,
+                formattedAmount,
+                userId);
+
+        this.rowHash = DigestUtils.md5Hex(transactions);
     }
 }
