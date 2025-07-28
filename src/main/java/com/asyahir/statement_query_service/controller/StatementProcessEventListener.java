@@ -6,6 +6,8 @@ import com.asyahir.statement_query_service.service.MaybankCreditService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
@@ -16,6 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
+@Slf4j
 public class StatementProcessEventListener {
 
     private final ObjectMapper objectMapper;
@@ -40,6 +43,9 @@ public class StatementProcessEventListener {
                 .map(MaybankCredit::new)
                 .collect(Collectors.toList());
 
-        maybankCreditService.saveMaybankCredit(maybankCreditList);
+        maybankCreditService.saveMaybankCredit(maybankCreditList)
+                .doOnSuccess(saved -> log.info("maybank-credit | saved credits records: {}", CollectionUtils.size(saved)))
+                .doOnError(error -> log.error("maybank-credit | error saving credits records: {}", error.getMessage()))
+                .subscribe();
     }
 }

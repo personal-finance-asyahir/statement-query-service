@@ -21,24 +21,25 @@ public class MaybankCreditService {
         this.maybankCreditRepository = maybankCreditRepository;
     }
 
-    public void saveMaybankCredit(List<MaybankCredit> maybankCredits) {
+    public Mono<List<MaybankCredit>> saveMaybankCredit(List<MaybankCredit> maybankCredits) {
         // TODO: logic to categorise
-        if (CollectionUtils.isEmpty(maybankCredits)) return;
+        if (CollectionUtils.isEmpty(maybankCredits)) {
+            return Mono.just(List.of());
+        }
 
         List<String> rowHashes = maybankCredits.stream()
                 .map(MaybankCredit::getRowHash).collect(Collectors.toList());
 
-        maybankCreditRepository.findByRowHashIn(rowHashes)
+        return maybankCreditRepository.findByRowHashIn(rowHashes)
                 .collectList()
                 .filter(CollectionUtils::isNotEmpty)
                 .map(existingCredits -> maybankCredits.stream()
                         .filter(credit -> existingCredits.stream()
                         .noneMatch(c -> StringUtils.equals(credit.getRowHash(), c.getRowHash())))
-                        .collect(Collectors.toUnmodifiableList()))
+                        .toList())
                 .switchIfEmpty(Mono.just(maybankCredits))
                 .filter(CollectionUtils::isNotEmpty)
                 .flatMap(cs -> maybankCreditRepository.saveAll(cs).collectList())
-                .subscribe();
-
+                .defaultIfEmpty(List.of());
     }
 }
