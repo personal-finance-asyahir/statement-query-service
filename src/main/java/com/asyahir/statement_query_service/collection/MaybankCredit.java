@@ -2,6 +2,7 @@ package com.asyahir.statement_query_service.collection;
 
 import com.asyahir.statement_query_service.pojo.MaybankCreditData;
 import com.asyahir.statement_query_service.util.RowHashGeneratorUtil;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.bson.types.ObjectId;
@@ -21,6 +22,7 @@ import java.util.UUID;
 @EqualsAndHashCode(exclude = "id")
 public class MaybankCredit {
     @Id
+    @JsonIgnore
     private ObjectId id;
     private UUID userId;
     private Double amount;
@@ -29,6 +31,8 @@ public class MaybankCredit {
     private LocalDate postingDate;
     private LocalDate transactionDate;
     private LocalDateTime insertedDateTime;
+
+    @JsonIgnore
     private String rowHash;
 
     public MaybankCredit(MaybankCreditData data) {

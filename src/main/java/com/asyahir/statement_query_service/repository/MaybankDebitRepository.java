@@ -7,7 +7,11 @@ import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import reactor.core.publisher.Flux;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface MaybankDebitRepository extends ReactiveMongoRepository<MaybankDebit, ObjectId> {
+
     Flux<MaybankDebit> findByRowHashIn(List<String> rowHash);
+
+    Flux<MaybankDebit> findAllByUserId(UUID userId);
 }

@@ -2,6 +2,7 @@ package com.asyahir.statement_query_service.collection;
 
 import com.asyahir.statement_query_service.pojo.MaybankDebitData;
 import com.asyahir.statement_query_service.util.RowHashGeneratorUtil;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
@@ -20,6 +21,7 @@ import java.util.UUID;
 @EqualsAndHashCode(exclude = "id")
 public class MaybankDebit {
     @Id
+    @JsonIgnore
     private ObjectId id;
     private UUID userId;
     private Double amount;
@@ -27,6 +29,8 @@ public class MaybankDebit {
     private char operation;
     private LocalDate transactionDate;
     private LocalDateTime insertedDateTime;
+
+    @JsonIgnore
     private String rowHash;
 
     public MaybankDebit(MaybankDebitData data) {

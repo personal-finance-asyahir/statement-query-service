@@ -7,9 +7,11 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,6 +43,10 @@ public class MaybankDebitService {
                 .filter(CollectionUtils::isNotEmpty)
                 .flatMap(cs -> maybankDebitRepository.saveAll(cs).collectList())
                 .defaultIfEmpty(List.of());
+    }
+
+    public Flux<MaybankDebit> findAllByUserId(UUID userId) {
+        return maybankDebitRepository.findAllByUserId(userId);
     }
 
 }
