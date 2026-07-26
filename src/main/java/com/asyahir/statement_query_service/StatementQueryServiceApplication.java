@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRep
 @EnableReactiveMongoRepositories
 public class StatementQueryServiceApplication {
 
-	public static void main(String[] args) {
+	static void main(String[] args) {
 		SpringApplication.run(StatementQueryServiceApplication.class, args);
 	}
 

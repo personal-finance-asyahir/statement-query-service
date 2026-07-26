@@ -1,6 +1,6 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.5.0'
+	id 'org.springframework.boot' version '4.1.0'
 	id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -9,7 +9,7 @@ version = '0.0.1-SNAPSHOT'
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
+		languageVersion = JavaLanguageVersion.of(25)
 	}
 }
 
@@ -21,23 +21,23 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
 
 	// SpringBoot: Lombok
-	implementation group: 'org.projectlombok', name: 'lombok', version: '1.18.38'
-	annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.38'
+	implementation "org.projectlombok:lombok:1.18.46"
+    annotationProcessor "org.projectlombok:lombok:1.18.46"
 
-	// SpringBoot: Webflux
-	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-webflux', version: '3.5.0'
+    // SpringBoot: Webflux
+	implementation('org.springframework.boot:spring-boot-starter-webflux')
 
 	//SpringBoot: Kafka
-	implementation group: 'org.springframework.kafka', name: 'spring-kafka', version: '3.3.5'
+	implementation 'org.springframework.boot:spring-boot-starter-kafka'
 
 	// SpringBoot: MongoDB reactive
-	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-mongodb-reactive', version: '3.5.0'
+	implementation "org.springframework.boot:spring-boot-starter-data-mongodb-reactive"
 
-	// Apache Commons Codec
+    // Apache Commons Codec
 	implementation 'commons-codec:commons-codec:1.18.0'
 
 	// Apache Commons Lang
-	implementation 'org.apache.commons:commons-lang3:3.17.0'
+	implementation 'org.apache.commons:commons-lang3:3.20.0'
 
 	// Apache Common Collections
 	implementation 'org.apache.commons:commons-collections4:4.5.0'
